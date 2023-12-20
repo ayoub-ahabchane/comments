@@ -1,9 +1,11 @@
-import React from 'react'
+import Comments from "./Comments";
 
 const Post = () => {
   return (
-    <div>Post</div>
-  )
-}
+    <div className="rounded-xl shadow h-[40rem] w-full max-w-[25rem] flex flex-col">
+      <Comments />
+    </div>
+  );
+};
 
-export default Post
+export default Post;
