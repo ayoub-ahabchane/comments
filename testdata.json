@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "id": "4af597fd-7ef4-4c19-a83b-fd9ddd689173",
+      "liked": false,
+      "content": "Here's a new one !!",
+      "username": "ayoub_ahabchane",
+      "author_id": "7187672d-e50c-4eee-800c-6597cd87c27b",
+      "num_likes": 0,
+      "avatar_url": "https://avatars.githubusercontent.com/u/61765121?v=4",
+      "created_at": "2023-12-21T06:35:01.182852+00:00",
+      "num_replies": 0
+    },
+    {
+      "id": "60e2408c-1ed1-4361-a584-22d56df756f1",
+      "liked": false,
+      "content": "Keep it up ❤️👌🔥",
+      "username": "ayoub_ahabchane",
+      "author_id": "7187672d-e50c-4eee-800c-6597cd87c27b",
+      "num_likes": 0,
+      "avatar_url": "https://avatars.githubusercontent.com/u/61765121?v=4",
+      "created_at": "2023-12-20T06:20:40.266267+00:00",
+      "num_replies": 0
+    },
+    {
+      "id": "df439550-d913-4641-8e3f-79aa84e72b90",
+      "liked": false,
+      "content": "Wow that is awesome!",
+      "username": "ayoubahabchane",
+      "author_id": "0bc6914e-0a9f-43b9-b93a-e41e0c58e242",
+      "num_likes": 1,
+      "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocLRAQ2IbK1JcdJdAbitTAs7qEvu7FUd3heHpcXd7QNxM2g=s96-c",
+      "created_at": "2023-12-20T06:19:59.980194+00:00",
+      "num_replies": 1
+    }
+  ],
+  "has_more": false
+}

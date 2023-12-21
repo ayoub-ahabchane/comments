@@ -1,9 +1,9 @@
-import { SComments } from "@/lib/types/schemas";
+import { SCommentsResponse } from "@/lib/types/schemas";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import Comment from "./Comment";
+import ClientComments from "./ClientComments";
 
-const Comments = async () => {
+const ServerComments = async () => {
   const cookieStore = cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,26 +16,22 @@ const Comments = async () => {
       },
     }
   );
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .schema("project_comments")
-    .rpc("get_comments");
-
-  const result = SComments.safeParse(data);
+    .rpc("get_comments_test", { _limit: 1 });
+  // console.log(data.comments);
+  const result = SCommentsResponse.safeParse(data);
 
   if (error || result.success === false) {
+    console.log(error);
+    console.log(result);
     return <p>Could not retrieve comments. Try again.</p>;
   } else {
-    return (
-      <div className="py-6 px-6 w-full max-w-[25rem] bg-white rounded-xl flex-1 flex flex-col">
-        <div className="flex flex-col flex-1 gap-4">
-          {result.success &&
-            result.data.map((commentData) => (
-              <Comment key={commentData.id} commentData={commentData} />
-            ))}
-        </div>
-      </div>
-    );
+    return <ClientComments initialLoad={result.data} userId={user?.id} />;
   }
 };
-export default Comments;
+export default ServerComments;

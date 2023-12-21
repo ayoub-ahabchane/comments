@@ -1,32 +1,21 @@
-import { SReplies, TComment } from "@/lib/types/schemas";
-import { createServerClient } from "@supabase/ssr";
+"use client";
+import { TComment } from "@/lib/types/schemas";
+import { createBrowserClient } from "@supabase/ssr";
 import { DateTime } from "luxon";
-import { cookies } from "next/headers";
 import Image from "next/image";
 import LikeButton from "./LikeButton";
 
-const Comment = async ({
+const Comment = ({
   commentData,
+  userId,
 }: {
   commentData: TComment;
-  isReply?: boolean;
+  userId: string | undefined;
 }) => {
-  const cookieStore = cookies();
-
-  const supabase = createServerClient(
+  const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   // const { data, error } = await supabase.rpc("get_replies", {
   //   _parent_comment_id: commentData.id,
@@ -69,19 +58,17 @@ const Comment = async ({
             initialNumLikes={commentData.num_likes}
             initialLikeStatus={commentData.liked}
             itemId={commentData.id}
-            userId={user?.id}
+            userId={userId}
           />
         </div>
         <div className="flex flex-col gap-4">
-          <p>Replies maybe ?</p>
-          {/* {commentData.num_replies > 0 && (
-            <Replies commentId={commentData.id} />
-          )} */}
+          {commentData.num_replies > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="w-10 h-px bg-neutral-300"></span>
+              <p className="text-neutral-500">View 1 more reply</p>
+            </div>
+          )}
           {/* VIEW MORE REPLIES */}
-          {/* <div className="flex items-center gap-4">
-            <span className="w-10 h-px bg-neutral-300"></span>
-            <p className="text-neutral-500">View 1 more reply</p>
-          </div> */}
         </div>
       </div>
     </article>
