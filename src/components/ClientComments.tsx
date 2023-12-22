@@ -83,8 +83,6 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
       </div>
     );
   }
-
-  return <p>data</p>;
 };
 
 export default ClientComments;
