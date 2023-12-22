@@ -36,11 +36,20 @@ export const SReplies = z.union([z.array(SReply), z.null()]);
 
 export const SCommentsResponse = z.object({
   comments: SComments,
-  has_more: z.boolean(),
+  cursor: z.string().nullable(),
+  total_count: z.number(),
 });
+
+export const SCommentResponseInfinite = z.union([
+  z.array(SCommentsResponse),
+  z.undefined(),
+]);
 
 export type TComment = z.infer<typeof SComment>;
 export type TComments = z.infer<typeof SComments>;
 export type TReply = z.infer<typeof SReply>;
 export type TReplies = z.infer<typeof SReplies>;
 export type TCommentsResponse = z.infer<typeof SCommentsResponse>;
+export type TCommentsResponseInfinite = z.infer<
+  typeof SCommentResponseInfinite
+>;
