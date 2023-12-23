@@ -7,33 +7,138 @@ export type Json =
   | Json[]
 
 export interface Database {
-  public: {
+  project_comments: {
     Tables: {
-      profiles: {
+      comment_likes: {
         Row: {
-          avatar_url: string | null
+          author_id: string
+          comment_id: string
           created_at: string
-          id: string
-          username: string
         }
         Insert: {
-          avatar_url?: string | null
+          author_id?: string
+          comment_id: string
           created_at?: string
-          id: string
-          username: string
         }
         Update: {
-          avatar_url?: string | null
+          author_id?: string
+          comment_id?: string
           created_at?: string
-          id?: string
-          username?: string
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
+            foreignKeyName: "comment_likes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      replies: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          parent_id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          parent_id: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          parent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "replies_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "replies_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      reply_likes: {
+        Row: {
+          author_id: string
+          created_at: string
+          reply_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          reply_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          reply_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reply_likes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reply_likes_reply_id_fkey"
+            columns: ["reply_id"]
+            isOneToOne: true
+            referencedRelation: "replies"
             referencedColumns: ["id"]
           }
         ]
@@ -43,13 +148,40 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_comments: {
+        Args: {
+          _limit: number
+          _cursor_timestamp?: string
+          _order_by?: string
+          _order_direction?: string
+        }
+        Returns: Json
+      }
+      get_comments_test: {
+        Args: {
+          _limit: number
+          _cursor_timestamp?: string
+          _order_by?: string
+          _order_direction?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      comment_summary: {
+        id: string
+        created_at: string
+        content: string
+        author_id: string
+        username: string
+        avatar_url: string
+        num_likes: number
+        num_replies: number
+        liked: boolean
+      }
     }
   }
 }

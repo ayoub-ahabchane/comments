@@ -7,18 +7,25 @@ import { createBrowserClient } from "@supabase/ssr";
 import useSWRInfinite from "swr/infinite";
 import Comment from "./Comment";
 
-const ClientComments = ({ userId }: { userId: string | undefined }) => {
+const ClientComments = ({
+  userId,
+  initialLoad,
+}: {
+  userId: string | undefined;
+  initialLoad: TCommentsResponse | undefined;
+}) => {
+  console.log(initialLoad);
+
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
   const getKey = (pageIndex: number, previousPageData: TCommentsResponse) => {
+    // first fetch
     if (pageIndex === 0) return { _limit: 1 };
-
     // Return null to stop fetching if we reached the end of pages
     if (!previousPageData.cursor) return null;
-
     // Use the cursor from the previous page to fetch the next page
     return { _limit: 1, _cursor_timestamp: previousPageData.cursor };
   };
@@ -48,7 +55,8 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
     size,
     setSize,
     isValidating,
-  } = useSWRInfinite(getKey, getComments);
+    mutate,
+  } = useSWRInfinite(getKey, getComments, { fallbackData: [initialLoad] });
 
   const validatedData = SCommentResponseInfinite.safeParse(data);
   console.log(validatedData);
@@ -59,7 +67,7 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
   } else if (!validatedData.success) {
     console.log(validatedData.error);
     return <p>Cannot retrieve comments due to an unexpected error.</p>;
-  } else if (isLoading) {
+  } else if (isLoading && !validatedData.data) {
     return <p>Loading...</p>;
   } else if (validatedData.data![0].comments.length === 0) {
     return <p>Start the discussion by leaving a comment!</p>;
