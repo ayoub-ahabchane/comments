@@ -1,5 +1,6 @@
 "use client";
 
+import { handleLike } from "@/lib/actions";
 import { useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDebouncedCallback } from "use-debounce";
@@ -10,43 +11,41 @@ const LikeButton = ({
   initialLikeStatus,
   initialNumLikes,
 }: {
-  itemId: number | string;
+  itemId: string;
   userId: string | undefined;
   initialLikeStatus: boolean;
   initialNumLikes: number;
 }) => {
   const [isLiked, setIsLiked] = useState<boolean>(initialLikeStatus);
   const [numLikes, setNumLikes] = useState<number>(initialNumLikes);
-  
-  // const handleClick = async () => {
-  //   if (!userId) return;
-  //   debouncedHandleLike(isLiked);
-  //   if (isLiked) {
-  //     setNumLikes((prev) => prev - 1);
-  //     setIsLiked(false);
-  //   } else {
-  //     setNumLikes((prev) => prev + 1);
-  //     setIsLiked(true);
-  //   }
-  // };
 
-  // const debouncedHandleLike = useDebouncedCallback(
-  //   (currentLikeStatus: boolean) => {
-  //     const action = currentLikeStatus ? "dislike" : "like";
-  //     try {
-  //       handleLike(itemId, userId!, action);
-  //     } catch (error) {
-  //       setIsLiked(currentLikeStatus);
-  //       setNumLikes((prev) => (currentLikeStatus ? prev - 1 : prev + 1));
-  //       console.error(error);
-  //     }
-  //   },
-  //   800
-  // );
+  const handleClick = async () => {
+    if (!userId) return;
+    debouncedHandleLike();
+    if (isLiked) {
+      setNumLikes((prev) => prev - 1);
+      setIsLiked(false);
+    } else {
+      setNumLikes((prev) => prev + 1);
+      setIsLiked(true);
+    }
+  };
+
+  const debouncedHandleLike = useDebouncedCallback(() => {
+    const currentLikeStatus = isLiked;
+    const action = isLiked ? "dislike" : "like";
+    try {
+      handleLike(action, itemId);
+    } catch (error) {
+      setIsLiked(currentLikeStatus);
+      setNumLikes((prev) => (currentLikeStatus ? prev - 1 : prev + 1));
+      console.error(error);
+    }
+  }, 800);
 
   return (
     <div className="flex flex-col items-center gap-1 text-neutral-500">
-      <button className="cursor-pointer" title="Like">
+      <button className="cursor-pointer" title="Like" onClick={handleClick}>
         {isLiked ? (
           <FaHeart className="text-base text-pink-600" />
         ) : (

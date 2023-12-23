@@ -32,5 +32,10 @@ const handleLike = async (type: "like" | "dislike", commentId: string) => {
   const { data } = await supabase
     .schema("project_comments")
     .from("comment_likes")
-    .insert({ comment_id: commentId });
+    .insert({ comment_id: commentId })
+    .select("*");
+
+  return data;
 };
+
+export { handleLike };
