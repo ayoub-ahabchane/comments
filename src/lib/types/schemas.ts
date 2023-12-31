@@ -18,21 +18,39 @@ export const SComment = z.object({
   num_replies: z.number(),
   liked: z.boolean(),
 });
-export const SComments = z.array(SComment);
+export const SComments = z.union([z.array(SComment), z.undefined()]);
 
-export const SReply = z.object({
-  id: z.number().int(),
+// export const SReply = z.object({
+//   id: z.number().int(),
+//   content: z.string(ScleanText),
+//   author_id: z.string().uuid(),
+//   username: z.string(),
+//   num_likes: z.number(),
+//   parent_comment_id: z.number(),
+//   avatar_url: z.string().url(),
+//   created_at: z.string().datetime({ offset: true }),
+//   liked: z.boolean(),
+// });
+
+const SReply = z.object({
+  id: z.string().uuid(),
+  comment_id: z.string().uuid(),
+  created_at: z.string().datetime({ offset: true }),
   content: z.string(ScleanText),
   author_id: z.string().uuid(),
   username: z.string(),
+  avatar_url: z.string().url().nullable(),
   num_likes: z.number(),
-  parent_comment_id: z.number(),
-  avatar_url: z.string().url(),
-  created_at: z.string().datetime({ offset: true }),
   liked: z.boolean(),
 });
 
 export const SReplies = z.union([z.array(SReply), z.null()]);
+
+export const SRepliesResponse = z.object({
+  replies: SReplies,
+  cursor: z.string().datetime().nullable(),
+  total_count: z.number(),
+});
 
 export const SCommentsResponse = z.object({
   comments: SComments,
@@ -40,15 +58,16 @@ export const SCommentsResponse = z.object({
   total_count: z.number(),
 });
 
-export const SCommentResponseInfinite = z.union([
-  z.array(SCommentsResponse),
-  z.undefined(),
-]);
+export const SCommentResponseInfinite = z.object({
+  pages: z.array(SCommentsResponse),
+  pageParams: z.array(z.union([z.string(), z.null()])),
+});
 
 export type TComment = z.infer<typeof SComment>;
 export type TComments = z.infer<typeof SComments>;
 export type TReply = z.infer<typeof SReply>;
 export type TReplies = z.infer<typeof SReplies>;
+export type TRepliesResponse = z.infer<typeof SRepliesResponse>;
 export type TCommentsResponse = z.infer<typeof SCommentsResponse>;
 export type TCommentsResponseInfinite = z.infer<
   typeof SCommentResponseInfinite

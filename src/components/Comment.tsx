@@ -1,9 +1,10 @@
 "use client";
 import { TComment } from "@/lib/types/schemas";
-import { createBrowserClient } from "@supabase/ssr";
 import { DateTime } from "luxon";
 import Image from "next/image";
+import { useState } from "react";
 import LikeButton from "./LikeButton";
+import Replies from "./Replies";
 
 const Comment = ({
   commentData,
@@ -12,18 +13,7 @@ const Comment = ({
   commentData: TComment;
   userId: string | undefined;
 }) => {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  // const { data, error } = await supabase.rpc("get_replies", {
-  //   _parent_comment_id: commentData.id,
-  // });
-  // const result = SReplies.safeParse(data);
-  // if (error) console.log(error);
-  // if (result.success === false) console.log(result.error);
-
+  const [isRepliesExpanded, setIsExpanded] = useState(false);
   const formattedCommentDate = DateTime.fromISO(commentData.created_at)
     .toRelative({ style: "short" })!
     .replace(/(\d+)\s*([a-zA-Z]).*/, "$1$2");
@@ -62,10 +52,20 @@ const Comment = ({
           />
         </div>
         <div className="flex flex-col gap-4">
-          {commentData.num_replies > 0 && (
+          {commentData.num_replies > 0 && isRepliesExpanded && (
+            <Replies commentId={commentData.id} />
+          )}
+          {commentData.num_replies > 0 && !isRepliesExpanded && (
             <div className="flex items-center gap-2">
               <span className="w-10 h-px bg-neutral-300"></span>
-              <p className="text-neutral-500">View 1 more reply</p>
+              <button
+                className="text-neutral-500"
+                onClick={() => {
+                  setIsExpanded(true);
+                }}
+              >
+                View replies
+              </button>
             </div>
           )}
           {/* VIEW MORE REPLIES */}

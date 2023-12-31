@@ -3,94 +3,79 @@ import {
   SCommentResponseInfinite,
   TCommentsResponse,
 } from "@/lib/types/schemas";
+import { Database } from "@/lib/types/supabase";
 import { createBrowserClient } from "@supabase/ssr";
-import useSWRInfinite from "swr/infinite";
+import {
+  QueryFunctionContext,
+  infiniteQueryOptions,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import Comment from "./Comment";
 
-const ClientComments = ({
-  userId,
-  initialLoad,
-}: {
-  userId: string | undefined;
-  initialLoad: TCommentsResponse | undefined;
-}) => {
-  console.log(initialLoad);
-
-  const supabase = createBrowserClient(
+const ClientComments = ({ userId }: { userId: string | undefined }) => {
+  const supabase = createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const getKey = (pageIndex: number, previousPageData: TCommentsResponse) => {
-    // first fetch
-    if (pageIndex === 0) return { _limit: 1 };
-    // Return null to stop fetching if we reached the end of pages
-    if (!previousPageData.cursor) return null;
-    // Use the cursor from the previous page to fetch the next page
-    return { _limit: 1, _cursor_timestamp: previousPageData.cursor };
-  };
+  const getComments = async ({ pageParam }: QueryFunctionContext) => {
+    try {
+      const { data, error } = await supabase
+        .schema("project_comments")
+        .rpc("get_comments", { _limit: 1, _cursor_timestamp: pageParam });
 
-  const getComments = async (
-    args:
-      | {
-          _limit: number;
-          _cursor_timestamp?: undefined;
-        }
-      | {
-          _limit: number;
-          _cursor_timestamp: string;
-        }
-      | null
-  ) => {
-    const { data } = await supabase
-      .schema("project_comments")
-      .rpc("get_comments_test", { ...args });
-    return (data as TCommentsResponse) || null;
+      if (error) throw new Error(error.message);
+
+      return data as TCommentsResponse;
+    } catch (error) {
+      throw new Error("Could not execute the query.");
+    }
   };
+  const options = infiniteQueryOptions({
+    queryKey: ["comments"],
+    queryFn: getComments,
+    initialPageParam: null,
+    getNextPageParam: (lastpage) => lastpage!.cursor,
+  });
 
   const {
     data,
-    error: swrError,
-    isLoading,
-    size,
-    setSize,
-    isValidating,
-    mutate,
-  } = useSWRInfinite(getKey, getComments, { fallbackData: [initialLoad] });
+    isError,
+    isPending,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(options);
+
+  if (isPending) return <p>Pending...</p>;
+  if (isError) return <p>Cannot retrieve comments at this time.</p>;
 
   const validatedData = SCommentResponseInfinite.safeParse(data);
-  console.log(validatedData);
-
-  if (swrError) {
-    console.log(swrError);
-    return <p>Cannot retrieve comments due to an unexpected error.</p>;
-  } else if (!validatedData.success) {
-    console.log(validatedData.error);
-    return <p>Cannot retrieve comments due to an unexpected error.</p>;
-  } else if (isLoading && !validatedData.data) {
-    return <p>Loading...</p>;
-  } else if (validatedData.data![0].comments.length === 0) {
-    return <p>Start the discussion by leaving a comment!</p>;
-  } else {
-    return (
-      <div className="flex flex-col gap-4">
-        {validatedData.data!.map((page) =>
-          page.comments.map((comment) => (
-            <Comment userId={userId} commentData={comment} key={comment.id} />
+  if (validatedData.success === false)
+    return <p>Could not retrieve comments.</p>;
+  const pagesLength = validatedData.data.pages.length;
+  return (
+    <div className="flex flex-col gap-4">
+      {validatedData.data.pages[0].total_count > 0 ? (
+        data.pages.map((page) =>
+          page.comments!.map((comment) => (
+            <Comment commentData={comment} userId={userId} key={comment.id} />
           ))
-        )}
-        {validatedData.data![validatedData.data!.length - 1].cursor && (
-          <button
-            onClick={() => {
-              setSize((size) => size + 1);
-            }}
-          >
-            {isValidating ? "boop" : "View more"}
-          </button>
-        )}
-      </div>
-    );
-  }
+        )
+      ) : (
+        <p>Be the first to comment!</p>
+      )}
+      {hasNextPage && (
+        <button
+          onClick={() => {
+            fetchNextPage();
+          }}
+        >
+          {isFetchingNextPage ? "boop" : "View more"}
+        </button>
+      )}
+    </div>
+  );
 };
 
 export default ClientComments;

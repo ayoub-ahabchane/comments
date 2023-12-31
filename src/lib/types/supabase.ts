@@ -157,12 +157,19 @@ export interface Database {
         }
         Returns: Json
       }
-      get_comments_test: {
+      get_replies_by_comment_id: {
         Args: {
+          _comment_id: string
           _limit: number
           _cursor_timestamp?: string
-          _order_by?: string
-          _order_direction?: string
+        }
+        Returns: Json
+      }
+      get_replies_by_comment_id_with_pagination: {
+        Args: {
+          _comment_id: string
+          _limit: number
+          _cursor_timestamp?: string
         }
         Returns: Json
       }
