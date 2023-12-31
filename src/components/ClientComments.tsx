@@ -5,11 +5,9 @@ import {
 } from "@/lib/types/schemas";
 import { Database } from "@/lib/types/supabase";
 import { createBrowserClient } from "@supabase/ssr";
-import {
-  QueryFunctionContext,
-  infiniteQueryOptions,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { QueryFunctionContext, useInfiniteQuery } from "@tanstack/react-query";
+import { FaEllipsis } from "react-icons/fa6";
+import { FiPlusCircle } from "react-icons/fi";
 import Comment from "./Comment";
 
 const ClientComments = ({ userId }: { userId: string | undefined }) => {
@@ -69,8 +67,20 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
           onClick={() => {
             fetchNextPage();
           }}
+          disabled={isPending || isFetchingNextPage}
+          className="text-neutral-500 disabled:text-neutral-500 transition mx-auto px-8 py-2 flex justify-center items-center gap-1 flex-col"
         >
-          {isFetchingNextPage ? "boop" : "View more"}
+          {isFetchingNextPage ? (
+            <>
+              <FaEllipsis className="text-2xl" />
+              Loading
+            </>
+          ) : (
+            <>
+              <FiPlusCircle className="text-2xl " />
+              View more comments
+            </>
+          )}
         </button>
       )}
     </div>
