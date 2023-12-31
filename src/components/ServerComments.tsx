@@ -29,11 +29,11 @@ const ServerComments = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const getComments = async ({ pageParam }: QueryFunctionContext) => {
+  const getComments = async ({ pageParam }: { pageParam: any }) => {
     try {
       const { data, error } = await supabase
         .schema("project_comments")
-        .rpc("get_comments", { _limit: 1, _cursor_timestamp: pageParam });
+        .rpc("get_comments", { _limit: 5, _cursor_timestamp: pageParam });
 
       if (error) throw new Error(error.message);
       return data as TCommentsResponse;

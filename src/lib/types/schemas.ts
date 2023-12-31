@@ -20,18 +20,6 @@ export const SComment = z.object({
 });
 export const SComments = z.union([z.array(SComment), z.undefined()]);
 
-// export const SReply = z.object({
-//   id: z.number().int(),
-//   content: z.string(ScleanText),
-//   author_id: z.string().uuid(),
-//   username: z.string(),
-//   num_likes: z.number(),
-//   parent_comment_id: z.number(),
-//   avatar_url: z.string().url(),
-//   created_at: z.string().datetime({ offset: true }),
-//   liked: z.boolean(),
-// });
-
 const SReply = z.object({
   id: z.string().uuid(),
   comment_id: z.string().uuid(),
@@ -39,7 +27,7 @@ const SReply = z.object({
   content: z.string(ScleanText),
   author_id: z.string().uuid(),
   username: z.string(),
-  avatar_url: z.string().url().nullable(),
+  avatar_url: z.string().url(),
   num_likes: z.number(),
   liked: z.boolean(),
 });
@@ -63,6 +51,10 @@ export const SCommentResponseInfinite = z.object({
   pageParams: z.array(z.union([z.string(), z.null()])),
 });
 
+export const SRepliesResponseInfinite = z.object({
+  pages: z.array(SRepliesResponse),
+  pageParams: z.array(z.union([z.string(), z.null()])),
+});
 export type TComment = z.infer<typeof SComment>;
 export type TComments = z.infer<typeof SComments>;
 export type TReply = z.infer<typeof SReply>;
@@ -72,3 +64,4 @@ export type TCommentsResponse = z.infer<typeof SCommentsResponse>;
 export type TCommentsResponseInfinite = z.infer<
   typeof SCommentResponseInfinite
 >;
+export type TRepliesResponseInfinite = z.infer<typeof SRepliesResponseInfinite>;

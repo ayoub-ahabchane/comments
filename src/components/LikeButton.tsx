@@ -19,33 +19,39 @@ const LikeButton = ({
   const [isLiked, setIsLiked] = useState<boolean>(initialLikeStatus);
   const [numLikes, setNumLikes] = useState<number>(initialNumLikes);
 
-  const handleClick = async () => {
-    if (!userId) return;
-    debouncedHandleLike();
-    if (isLiked) {
-      setNumLikes((prev) => prev - 1);
-      setIsLiked(false);
-    } else {
-      setNumLikes((prev) => prev + 1);
-      setIsLiked(true);
-    }
-  };
+  // const handleClick = async () => {
+  //   if (!userId) return;
+  //   debouncedLike();
+  //   if (isLiked) {
+  //     setNumLikes((prev) => prev - 1);
+  //     setIsLiked(false);
+  //   } else {
+  //     setNumLikes((prev) => prev + 1);
+  //     setIsLiked(true);
+  //   }
+  // };
 
-  const debouncedHandleLike = useDebouncedCallback(() => {
-    const currentLikeStatus = isLiked;
-    const action = isLiked ? "dislike" : "like";
-    try {
-      handleLike(action, itemId);
-    } catch (error) {
-      setIsLiked(currentLikeStatus);
-      setNumLikes((prev) => (currentLikeStatus ? prev - 1 : prev + 1));
-      console.error(error);
-    }
-  }, 800);
+  // const debouncedLike = useDebouncedCallback(() => {
+  //   const currentLikeStatus = isLiked;
+  //   const action = isLiked ? "dislike" : "like";
+  //   try {
+  //     handleLike(action, itemId);
+  //   } catch (error) {
+  //     setIsLiked(currentLikeStatus);
+  //     setNumLikes((prev) => (currentLikeStatus ? prev - 1 : prev + 1));
+  //     console.error(error);
+  //   }
+  // }, 200);
 
   return (
     <div className="flex flex-col items-center gap-1 text-neutral-500">
-      <button className="cursor-pointer" title="Like" onClick={handleClick}>
+      <button
+        className="cursor-pointer"
+        title="Like"
+        onClick={() => {
+          console.log("boop!");
+        }}
+      >
         {isLiked ? (
           <FaHeart className="text-base text-pink-600" />
         ) : (

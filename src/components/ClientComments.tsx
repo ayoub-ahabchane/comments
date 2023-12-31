@@ -16,11 +16,11 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const getComments = async ({ pageParam }: QueryFunctionContext) => {
+  const getComments = async ({ pageParam }: { pageParam: any }) => {
     try {
       const { data, error } = await supabase
         .schema("project_comments")
-        .rpc("get_comments", { _limit: 1, _cursor_timestamp: pageParam });
+        .rpc("get_comments", { _limit: 5, _cursor_timestamp: pageParam });
 
       if (error) throw new Error(error.message);
 
@@ -44,13 +44,13 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
     getNextPageParam: (lastpage) => lastpage!.cursor,
   });
 
+  const validatedData = SCommentResponseInfinite.safeParse(data);
+
   if (isPending) return <p>Pending...</p>;
   if (isError) return <p>Cannot retrieve comments at this time.</p>;
-
-  const validatedData = SCommentResponseInfinite.safeParse(data);
   if (validatedData.success === false)
     return <p>Could not retrieve comments.</p>;
-  const pagesLength = validatedData.data.pages.length;
+
   return (
     <div className="flex flex-col gap-4">
       {validatedData.data.pages[0].total_count > 0 ? (

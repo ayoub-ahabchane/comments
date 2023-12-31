@@ -29,12 +29,13 @@ const handleLike = async (type: "like" | "dislike", commentId: string) => {
     }
   );
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .schema("project_comments")
     .from("comment_likes")
     .insert({ comment_id: commentId })
     .select("*");
 
+  if (error) throw new Error(error.message);
   return data;
 };
 

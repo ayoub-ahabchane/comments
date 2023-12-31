@@ -51,25 +51,24 @@ const Comment = ({
             userId={userId}
           />
         </div>
-        <div className="flex flex-col gap-4">
-          {commentData.num_replies > 0 && isRepliesExpanded && (
-            <Replies commentId={commentData.id} />
-          )}
-          {commentData.num_replies > 0 && !isRepliesExpanded && (
-            <div className="flex items-center gap-2">
-              <span className="w-10 h-px bg-neutral-300"></span>
-              <button
-                className="text-neutral-500"
-                onClick={() => {
-                  setIsExpanded(true);
-                }}
-              >
-                View replies
-              </button>
-            </div>
-          )}
-          {/* VIEW MORE REPLIES */}
-        </div>
+
+        {commentData.num_replies > 0 && isRepliesExpanded && (
+          <Replies commentId={commentData.id} userId={userId} />
+        )}
+        {commentData.num_replies > 0 && !isRepliesExpanded && (
+          <div className="flex items-center gap-2">
+            <span className="w-10 h-px bg-neutral-300"></span>
+            <button
+              className="text-neutral-500"
+              onClick={() => {
+                setIsExpanded(true);
+              }}
+            >
+              {commentData.num_replies} repl
+              {commentData.num_replies > 1 ? "ies" : "y"}
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );
