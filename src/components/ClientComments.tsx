@@ -31,12 +31,6 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
       throw new Error("Could not execute the query.");
     }
   };
-  const options = infiniteQueryOptions({
-    queryKey: ["comments"],
-    queryFn: getComments,
-    initialPageParam: null,
-    getNextPageParam: (lastpage) => lastpage!.cursor,
-  });
 
   const {
     data,
@@ -45,7 +39,12 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery(options);
+  } = useInfiniteQuery({
+    queryKey: ["comments"],
+    queryFn: getComments,
+    initialPageParam: null,
+    getNextPageParam: (lastpage) => lastpage!.cursor,
+  });
 
   if (isPending) return <p>Pending...</p>;
   if (isError) return <p>Cannot retrieve comments at this time.</p>;
