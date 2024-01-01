@@ -26,6 +26,13 @@ const LikeButton = ({
   const mutation = useMutation({
     mutationFn: (newAction: "like" | "dislike") =>
       handleLike(itemType, newAction, itemId),
+    onMutate: () => {
+      return { previousLikeStatus: isLiked, previousNumLikes: numLikes };
+    },
+    onError: (error, variables, context) => {
+      setNumLikes((prev) => (variables === "like" ? prev - 1 : prev + 1));
+      setIsLiked((prev) => (variables === "like" ? false : true));
+    },
   });
 
   const handleDebouncedLike = useDebouncedCallback(
@@ -35,7 +42,7 @@ const LikeButton = ({
       }
       initialLikeStatusRef.current = null;
     },
-    2000
+    500
   );
 
   const title = !userId
