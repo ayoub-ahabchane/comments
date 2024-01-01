@@ -45,10 +45,10 @@ const Comment = ({
           </div>
 
           <LikeButton
+            itemType="comment"
             initialNumLikes={commentData.num_likes}
             initialLikeStatus={commentData.liked}
             itemId={commentData.id}
-            userId={userId}
           />
         </div>
 

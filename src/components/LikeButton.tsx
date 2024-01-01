@@ -1,47 +1,40 @@
 "use client";
 
 import { handleLike } from "@/lib/actions";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDebouncedCallback } from "use-debounce";
 
 const LikeButton = ({
+  itemType,
   itemId,
-  userId,
   initialLikeStatus,
   initialNumLikes,
 }: {
+  itemType: "comment" | "reply";
   itemId: string;
-  userId: string | undefined;
   initialLikeStatus: boolean;
   initialNumLikes: number;
 }) => {
-  const [isLiked, setIsLiked] = useState<boolean>(initialLikeStatus);
-  const [numLikes, setNumLikes] = useState<number>(initialNumLikes);
+  const [isLiked, setIsLiked] = useState(initialLikeStatus);
+  const [numLikes, setNumLikes] = useState(initialNumLikes);
+  const initialLikeStatusRef = useRef<"like" | "dislike" | null>(null);
+  const nextAction = isLiked ? "dislike" : "like";
+  const mutation = useMutation({
+    mutationFn: (newAction: "like" | "dislike") =>
+      handleLike(itemType, newAction, itemId),
+  });
 
-  // const handleClick = async () => {
-  //   if (!userId) return;
-  //   debouncedLike();
-  //   if (isLiked) {
-  //     setNumLikes((prev) => prev - 1);
-  //     setIsLiked(false);
-  //   } else {
-  //     setNumLikes((prev) => prev + 1);
-  //     setIsLiked(true);
-  //   }
-  // };
-
-  // const debouncedLike = useDebouncedCallback(() => {
-  //   const currentLikeStatus = isLiked;
-  //   const action = isLiked ? "dislike" : "like";
-  //   try {
-  //     handleLike(action, itemId);
-  //   } catch (error) {
-  //     setIsLiked(currentLikeStatus);
-  //     setNumLikes((prev) => (currentLikeStatus ? prev - 1 : prev + 1));
-  //     console.error(error);
-  //   }
-  // }, 200);
+  const handleDebouncedLike = useDebouncedCallback(
+    (action: "dislike" | "like") => {
+      if (action !== initialLikeStatusRef.current) {
+        mutation.mutate(action);
+      }
+      initialLikeStatusRef.current = null;
+    },
+    2000
+  );
 
   return (
     <div className="flex flex-col items-center gap-1 text-neutral-500">
@@ -49,7 +42,13 @@ const LikeButton = ({
         className="cursor-pointer"
         title="Like"
         onClick={() => {
-          console.log("boop!");
+          if (initialLikeStatusRef.current === null) {
+            initialLikeStatusRef.current =
+              nextAction === "dislike" ? "like" : "dislike";
+          }
+          setIsLiked((prev) => !prev);
+          setNumLikes((prev) => (isLiked ? prev - 1 : prev + 1));
+          handleDebouncedLike(nextAction);
         }}
       >
         {isLiked ? (

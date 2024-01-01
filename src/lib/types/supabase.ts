@@ -117,7 +117,7 @@ export interface Database {
           reply_id: string
         }
         Insert: {
-          author_id: string
+          author_id?: string
           created_at?: string
           reply_id: string
         }
@@ -158,14 +158,6 @@ export interface Database {
         Returns: Json
       }
       get_replies_by_comment_id: {
-        Args: {
-          _comment_id: string
-          _limit: number
-          _cursor_timestamp?: string
-        }
-        Returns: Json
-      }
-      get_replies_by_comment_id_with_pagination: {
         Args: {
           _comment_id: string
           _limit: number

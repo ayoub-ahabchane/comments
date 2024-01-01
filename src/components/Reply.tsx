@@ -26,7 +26,6 @@ const Reply = ({
           className="rounded-full bg-neutral-200"
         />
       </div>
-
       <div className="grid grid-cols-[auto_min-content] gap-x-4">
         <div className="flex flex-col gap-2">
           <p className="flex gap-1 items-baseline font-semibold">
@@ -42,10 +41,10 @@ const Reply = ({
         </div>
 
         <LikeButton
+          itemType="reply"
           initialNumLikes={replyData.num_likes}
           initialLikeStatus={replyData.liked}
           itemId={replyData.id}
-          userId={userId}
         />
       </div>
     </article>
