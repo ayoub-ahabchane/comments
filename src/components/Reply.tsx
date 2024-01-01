@@ -41,6 +41,7 @@ const Reply = ({
         </div>
 
         <LikeButton
+          userId={userId}
           itemType="reply"
           initialNumLikes={replyData.num_likes}
           initialLikeStatus={replyData.liked}

@@ -8,11 +8,13 @@ import { useDebouncedCallback } from "use-debounce";
 
 const LikeButton = ({
   itemType,
+  userId,
   itemId,
   initialLikeStatus,
   initialNumLikes,
 }: {
   itemType: "comment" | "reply";
+  userId: string | undefined;
   itemId: string;
   initialLikeStatus: boolean;
   initialNumLikes: number;
@@ -36,12 +38,22 @@ const LikeButton = ({
     2000
   );
 
+  const title = !userId
+    ? "Wanna leave a like? Sign in first!"
+    : itemType === "comment"
+      ? nextAction === "like"
+        ? "Like this comment"
+        : "Unlike this comment"
+      : nextAction === "like"
+        ? "Like this reply"
+        : "Unlike this reply";
   return (
     <div className="flex flex-col items-center gap-1 text-neutral-500">
       <button
-        className="cursor-pointer"
-        title="Like"
+        className="cursor-pointer disabled:cursor-default"
+        title={title}
         onClick={() => {
+          if (!userId) return;
           if (initialLikeStatusRef.current === null) {
             initialLikeStatusRef.current =
               nextAction === "dislike" ? "like" : "dislike";
