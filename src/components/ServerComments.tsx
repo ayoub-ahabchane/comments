@@ -3,13 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 import {
   HydrationBoundary,
   QueryClient,
-  QueryFunctionContext,
   dehydrate,
 } from "@tanstack/react-query";
 
+import { TCommentsResponse } from "@/lib/types/schemas";
 import { cookies } from "next/headers";
 import ClientComments from "./ClientComments";
-import { TCommentsResponse } from "@/lib/types/schemas";
 
 const ServerComments = async () => {
   const queryClient = new QueryClient();
@@ -51,9 +50,11 @@ const ServerComments = async () => {
   });
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ClientComments userId={user?.id} />
-    </HydrationBoundary>
+    <div className="flex flex-col flex-1">
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <ClientComments userId={user?.id} />
+      </HydrationBoundary>
+    </div>
   );
 };
 

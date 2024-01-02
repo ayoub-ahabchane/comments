@@ -52,7 +52,7 @@ const ClientComments = ({ userId }: { userId: string | undefined }) => {
     return <p>Could not retrieve comments.</p>;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-6">
       {validatedData.data.pages[0].total_count > 0 ? (
         data.pages.map((page) =>
           page.comments!.map((comment) => (

@@ -71,7 +71,7 @@ const LikeButton = ({
         }}
       >
         {isLiked ? (
-          <FaHeart className="text-base text-pink-600" />
+          <FaHeart className="text-base text-pink-500" />
         ) : (
           <FaRegHeart className="text-base" />
         )}
