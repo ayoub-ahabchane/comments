@@ -3,6 +3,7 @@ import LikeButton from "./LikeButton";
 import { TReply } from "@/lib/types/schemas";
 import Image from "next/image";
 import { DateTime } from "luxon";
+import ReplyBtn from "./ReplyBtn";
 
 const Reply = ({
   replyData,
@@ -36,7 +37,7 @@ const Reply = ({
           </p>
           <p>{replyData.content}</p>
           <div className="text-neutral-500">
-            <button>Reply</button>
+            <ReplyBtn parentPayload={replyData} />
           </div>
         </div>
 

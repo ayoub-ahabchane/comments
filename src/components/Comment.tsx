@@ -1,10 +1,10 @@
-"use client";
 import { TComment } from "@/lib/types/schemas";
 import { DateTime } from "luxon";
 import Image from "next/image";
 import { useState } from "react";
 import LikeButton from "./LikeButton";
 import Replies from "./Replies";
+import ReplyBtn from "./ReplyBtn";
 
 const Comment = ({
   commentData,
@@ -17,7 +17,6 @@ const Comment = ({
   const formattedCommentDate = DateTime.fromISO(commentData.created_at)
     .toRelative({ style: "short" })!
     .replace(/(\d+)\s*([a-zA-Z]).*/, "$1$2");
-
   return (
     <article className="grid grid-flow-col grid-cols-[min-content_auto] gap-x-4">
       <div className="aspect-square w-10 rounded-full bg-neutral-200">
@@ -40,7 +39,7 @@ const Comment = ({
             </p>
             <p>{commentData.content}</p>
             <div className="text-neutral-500">
-              <button>Reply</button>
+              <ReplyBtn parentPayload={commentData} />
             </div>
           </div>
 

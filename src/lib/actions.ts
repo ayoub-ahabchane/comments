@@ -4,8 +4,9 @@ import { CookieOptions, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { Database } from "./types/supabase";
+import { TInputMode, TParentPayload } from "./store";
 
-const handleLike = async (
+export const handleLike = async (
   itemType: "comment" | "reply",
   action: "like" | "dislike",
   itemId: string
@@ -97,4 +98,26 @@ const handleLike = async (
   }
 };
 
-export { handleLike };
+export const onSubmit = (
+  mode: TInputMode,
+  formData: FormData,
+  parentPayload?: TParentPayload
+) => {
+  if (mode === "comment") {
+    console.log({
+      type: "comment",
+      content: formData.get("input"),
+    });
+  }
+  if (mode === "reply") {
+    console.log({
+      type: "reply",
+      content: formData.get("input"),
+      parent: {
+        id: parentPayload?.id,
+        author: parentPayload?.username,
+        content: parentPayload?.content,
+      },
+    });
+  }
+};
